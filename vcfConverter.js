@@ -78,17 +78,120 @@ function convertFromVcfToJSON(acc, val) {
             acc[name].title = val[1];
             break;
         case 'CATEGORIES':
-            acc[name].categories = val[1];
+            acc[name].categories = acc[name].categories || [];
+            acc[name].categories.push(val[1]);
+            break;
+        case 'NICKNAME':
+            acc[name].nickname = val[1];
             break;
         case 'X-GENDER':
             acc[name].gender = val[1];
             break;
     }
     return acc;
+}
+
+// address=Endereco bla
+// address2=Endereco 2 bla
+// city=Cidade
+// state=Estado
+// zip=CEP
+// country=Pais
+// url=URL
+// groups=grupo1,grupo2
+
+function convertToAbook(json) {
+    let idx = 0;
+    let output = "\n[format]\nprogram=abook\nversion=0.6.1\n";
+    for (const contact in json) {
+        ++idx;
+        output += "\n[" + idx + "]\n";
+        output += "name=" + contact + "\n";
+        if (json[contact].nickname)
+            output += "nick=" + json[contact].nickname + "\n";
+        if (json[contact].title)
+            output += "custom1=" + json[contact].title + "\n";
+        if (json[contact].birthday)
+            output += "anniversary=" + json[contact].birthday + "\n";
+        if (json[contact].gender)
+            output += "custom2=" + json[contact].gender + "\n";
+        if (json[contact].groups) {
+            output += "groups=";
+            json[contact].groups.forEach(group => { output += group + "," });
+            output += "\n";
+        }
+        if (json[contact].email) {
+            output+="email=";
+            if (json[contact].email.home) {
+                json[contact].email.home.forEach(email => {output += email
+                        + ",";});
+                output = output.slice(0, -1);
+                output+="\n";
+            }
+            if (json[contact].email.work) {
+                json[contact].email.work.forEach(email => {output += email
+                        + ",";});
+                output = output.slice(0, -1);
+                output+="\n";
+            }
+            if (json[contact].email.other) {
+                json[contact].email.other.forEach(email => {output += email
+                        + ",";});
+                output = output.slice(0, -1);
+                output+="\n";
+            }
+        }
+        if (json[contact].phone) {
+            if (json[contact].phone.home) {
+                output += "phone=";
+                json[contact].phone.home.forEach(phone => { output += phone
+                        + "," });
+                output = output.slice(0, -1);
+                output+="\n";
+            }
+            if (json[contact].phone.work) {
+                output += "workphone=";
+                json[contact].phone.work.forEach(phone => { output += phone
+                        + "," });
+                output = output.slice(0, -1);
+                output+="\n";
+            }
+            if (json[contact].phone.mobile) {
+                output += "mobile=";
+                json[contact].phone.mobile.forEach( phone => { output += phone
+                        + "," } );
+                output = output.slice(0, -1);
+                output+="\n";
+            }
+            if (json[contact].phone.other) {
+                output += "fax=";
+                json[contact].phone.other.forEach( phone => { output += phone
+                        + "," } );
+                output = output.slice(0, -1);
+                output+="\n";
+            }
+        }
+        if (json[contact].note)
+            output += "notes=" + json[contact].note + "\n";
+    }
+
+    console.log(output);
 
 }
 
-fs.readFile("/home/thiago/Downloads/converter/contacts.vcf", "utf8", function (err, data) {
+function convertFromJsonTo(extension, jsonData) {
+    switch (extension) {
+        case 'ABOOK':
+            convertToAbook(jsonData);
+            break;
+        default:
+            console.log("I don't really know how to convert a " + extension
+            + " file :(.");
+            break;
+    }
+}
+
+fs.readFile("./contacts.vcf", "utf8", function (err, data) {
     if (err) throw err;
 
     let name = '';
@@ -97,6 +200,5 @@ fs.readFile("/home/thiago/Downloads/converter/contacts.vcf", "utf8", function (e
         .map(line => line.split(":"))
         .reduce(convertFromVcfToJSON, {});
     ;
-    console.log("----------------------------------");
-    console.log(JSON.stringify(objs, null, 2));
+    convertFromJsonTo('ABOOK', objs)
 });
