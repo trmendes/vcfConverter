@@ -16,18 +16,11 @@ know a better way of coding please, let's talk :)
 
 ### How to run it?
 
-Soon I'm gonna change the way it works
-
-By now: you have save your VCF file at the same directory as the script
-Run: babel-node vcfConverter.js
+Run: babel-node vcfConverter.js input_filename.vcf > output_filename
 
 ### Is it working?
 
-It will give you a JSON object as an output. So, no, it is not working.
-
-### Next Steps
-
-Convert this JSON output to the ABOOK format
+Yes! If you find any problem just open an issue so we can work on it :)
 
 ### Icon
 
