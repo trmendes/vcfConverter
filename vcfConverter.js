@@ -191,14 +191,22 @@ function convertFromJsonTo(extension, jsonData) {
     }
 }
 
-fs.readFile("./contacts.vcf", "utf8", function (err, data) {
-    if (err) throw err;
-
-    let name = '';
-    let objs = data
-        .split(/\r\n/)
-        .map(line => line.split(":"))
-        .reduce(convertFromVcfToJSON, {});
-    ;
-    convertFromJsonTo('ABOOK', objs)
-});
+if (process.argv.length <= 2) {
+    console.log("usage: babel-node vfcConvertes.js file.vfc > output");
+} else {
+    let ipt_file_name = process.argv[2];
+    fs.readFile(ipt_file_name, "utf8", function (err, data) {
+        if (err) {
+            console.log("File not found");
+            return;
+        } else {
+            let name = '';
+            let objs = data
+                .split(/\r\n/)
+                .map(line => line.split(":"))
+                .reduce(convertFromVcfToJSON, {});
+            ;
+            convertFromJsonTo('ABOOK', objs)
+        }
+    });
+}
