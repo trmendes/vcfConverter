@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 let fs = require('fs');
 
 function convertFromVcfToJSON(acc, val) {
@@ -192,7 +194,7 @@ function convertFromJsonTo(extension, jsonData) {
 }
 
 if (process.argv.length <= 2) {
-    console.log("usage: babel-node vfcConvertes.js file.vfc > output");
+    console.log("usage: vfcConvertes.js file.vfc > output");
 } else {
     let ipt_file_name = process.argv[2];
     fs.readFile(ipt_file_name, "utf8", function (err, data) {
