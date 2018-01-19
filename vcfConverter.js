@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+"use strict";
+
 let fs = require('fs');
 
 function convertFromVcfToJSON(acc, val) {
